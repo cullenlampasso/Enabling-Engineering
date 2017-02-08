@@ -1,0 +1,63 @@
+%% Clear all
+
+clc;
+clear all;
+
+%% Initializing arduino
+
+a = arduino('com','uno')
+
+%% Initializing other parameters
+
+% Vectors for plotting
+xPlot = zeros(1,500);
+yPlot = zeros(1,500);
+zPlot = zeros(1,500);
+
+timeScale = 1:500;
+
+% Setting up axes and line for plotting
+myAxes = axes('Xlim',[0 500],'Ylim',[0 5]);
+grid on;
+    
+l1 = line(timeScale,xPlot);
+l2 = line(timeScale,yPlot);
+l3 = line(timeScale,zPlot);
+
+drawnow;
+
+%% Initializing accelerometer pins
+
+xPin = 'A0';
+yPin = 'A1';
+zPin = 'A2';
+
+%% Reading the accelerometer values and storing them in the plotting vectors and then plot them
+
+% Start the timer
+tic
+
+% Code runs for 30 seconds
+while toc < 30
+    
+    % Read the values from accelerometer
+    x = readVoltage(a,xPin)
+    y = readVoltage(a,yPin)
+    z = readVoltage(a,zPin)
+    
+    % Update the values in the vectors
+    xPlot = [xPlot(2:end),x];
+    yPlot = [yPlot(2:end),y];
+    zPlot = [zPlot(2:end),z];
+    
+    % Update the values for the lines in the plot
+    set(l1,'Ydata',xPlot);
+    set(l2,'Ydata',yPlot);
+    set(l3,'Ydata',zPlot);
+
+    drawnow;
+    
+    % Pause before the next iteration
+    pause(0.1);
+    
+end
